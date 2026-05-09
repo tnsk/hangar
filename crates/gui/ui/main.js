@@ -68,7 +68,7 @@ const THEMES = [
   { id: "dracula", name: "Dracula" },
   { id: "catppuccin", name: "Catppuccin" },
   { id: "nord", name: "Nord" },
-  { id: "turkiye", name: "Türkiye" },
+  { id: "terminator", name: "Terminator" },
 ];
 
 function detectTheme() {

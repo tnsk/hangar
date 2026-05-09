@@ -1185,69 +1185,99 @@ main {
 }
 
 /* ===================================================================
-   THEME — TÜRKİYE
-   Bayrağın kırmızısı zemin, beyaz tipografi, HANGAR'ın başında ay yıldız.
+   THEME — TERMINATOR
+   T-800 estetiği: dövülmüş çelik gri + kan kırmızısı göz + neredeyse-siyah.
+   Mono tipografi, hard shadow, üstte tarayıcı gibi ince kırmızı şerit.
    =================================================================== */
-[data-theme="turkiye"] {
-  --bg: #c8102e;
-  --bg-elev: #7a0817;
-  --fg: #ffffff;
-  --fg-mute: rgba(255, 255, 255, 0.82);
-  --fg-faint: rgba(255, 255, 255, 0.55);
-  --border: rgba(255, 255, 255, 0.22);
-  --border-strong: rgba(255, 255, 255, 0.5);
-  --accent: #ffffff;
-  --accent-fg: #c8102e;
-  /* Beyaz overlay kırmızıyla karışınca pembe verir; siyah overlay daha koyu
-     kırmızı verir. Hover, focus halkası ve transparan yerlerde kullanılır. */
-  --accent-soft: rgba(0, 0, 0, 0.22);
-  --good: #ffd75a;
-  --error: #ffd75a;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+[data-theme="terminator"] {
+  --bg: #07060a;
+  --bg-elev: #14100e;
+  --fg: #d6d3ce;
+  --fg-mute: #8a8580;
+  --fg-faint: #4a4642;
+  --border: #2a221d;
+  --border-strong: #4a3d35;
+  --accent: #d4181e;
+  --accent-fg: #07060a;
+  --accent-soft: rgba(212, 24, 30, 0.16);
+  --good: #c0c5cc;
+  --error: #ff3434;
+  --shadow-sm: 0 1px 0 rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 1px 0 rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.55);
 }
 
-[data-theme="turkiye"] body {
-  background-image: none;
+[data-theme="terminator"] body {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  background-image:
+    linear-gradient(180deg, rgba(212, 24, 30, 0.04) 0%, transparent 30%),
+    radial-gradient(circle at 50% 100%, rgba(212, 24, 30, 0.08), transparent 70%);
 }
 
-/* Marka başında ay-yıldız: SVG, beyaz outer disk + kırmızı inner disk
-   ile crescent oyulur, sağında 5 köşeli yıldız. Unicode ☪'ye değil bizim
-   geometrimize bağlı, font'a güvenmiyor. */
-[data-theme="turkiye"] .brand-name::before {
+/* Üstte ince kırmızı tarayıcı şeridi — T-800 görüş alanı çağrışımı */
+[data-theme="terminator"] body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 12px var(--accent), 0 0 24px rgba(212, 24, 30, 0.4);
+  z-index: 9999;
+  pointer-events: none;
+}
+
+[data-theme="terminator"] .brand-name {
+  color: var(--accent);
+  text-shadow: 0 0 6px rgba(212, 24, 30, 0.5);
+  letter-spacing: 0.24em;
+}
+
+[data-theme="terminator"] .preset.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 12px rgba(212, 24, 30, 0.18);
+}
+
+[data-theme="terminator"] .preset.active .preset-name {
+  color: var(--accent);
+}
+
+[data-theme="terminator"] .drop-icon,
+[data-theme="terminator"] .result-hero-metric,
+[data-theme="terminator"] .busy-pct {
+  color: var(--accent);
+}
+
+[data-theme="terminator"] .drop-icon {
+  filter: drop-shadow(0 0 6px rgba(212, 24, 30, 0.4));
+}
+
+[data-theme="terminator"] .progress-fill {
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(212, 24, 30, 0.6);
+}
+
+[data-theme="terminator"] #lang,
+[data-theme="terminator"] #theme {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Marka başında küçük tarayıcı kırmızı nokta — robot gözü */
+[data-theme="terminator"] .brand-name::before {
   content: "";
   display: inline-block;
-  width: 22px;
-  height: 22px;
-  margin-right: 10px;
-  vertical-align: -5px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='13' cy='16' r='10' fill='white'/><circle cx='16' cy='16' r='8' fill='%23c8102e'/><polygon fill='white' points='24,11 25.22,14.89 29,14.89 25.89,17.11 27.22,21 24,18.78 20.78,21 22.11,17.11 19,14.89 22.78,14.89'/></svg>");
-  background-repeat: no-repeat;
-  background-size: contain;
-}
-
-/* Aktif preset: kırmızı kart üstünde mini bayrak — beyaz zemin + kırmızı yazı */
-[data-theme="turkiye"] .preset.active {
+  width: 8px;
+  height: 8px;
+  margin-right: 12px;
+  border-radius: 50%;
   background: var(--accent);
-  border-color: var(--accent);
-}
-
-[data-theme="turkiye"] .preset.active .preset-name,
-[data-theme="turkiye"] .preset.active .preset-detail {
-  color: var(--accent-fg);
-}
-
-/* Drop hint chip de aynı kontrast: solid beyaz blok + kırmızı yazı */
-[data-theme="turkiye"] .drop-hint code {
-  background: var(--accent);
-  color: var(--accent-fg);
-}
-
-[data-theme="turkiye"] .progress-fill {
-  background: var(--accent);
-}
-
-/* Sonuç kartı: başarı beyaz, hata sarı kenar */
-[data-theme="turkiye"] .result.error {
-  border-left-color: var(--error);
+  box-shadow: 0 0 8px var(--accent), 0 0 14px rgba(212, 24, 30, 0.5);
+  vertical-align: 1px;
 }
