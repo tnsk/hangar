@@ -1343,7 +1343,7 @@ dependencies = [
 
 [[package]]
 name = "hangar-cli"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "clap",
@@ -1354,7 +1354,7 @@ dependencies = [
 
 [[package]]
 name = "hangar-core"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "argon2",
  "byteorder",
@@ -1368,7 +1368,7 @@ dependencies = [
 
 [[package]]
 name = "hangar-gui"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "hangar-core",
  "serde",

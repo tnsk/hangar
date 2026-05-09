@@ -61,8 +61,13 @@ function populateLangSelector(sel) {
 // ─── Theme ───────────────────────────────────────────────────────────
 const THEMES = [
   { id: "hangar", name: "Hangar" },
+  { id: "carbon", name: "Carbon" },
   { id: "matrix", name: "Matrix" },
   { id: "tron", name: "Tron" },
+  { id: "synthwave", name: "Synthwave" },
+  { id: "dracula", name: "Dracula" },
+  { id: "catppuccin", name: "Catppuccin" },
+  { id: "nord", name: "Nord" },
 ];
 
 function detectTheme() {

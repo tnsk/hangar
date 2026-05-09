@@ -980,3 +980,161 @@ main {
 [data-theme="tron"] .drop-overlay-text {
   text-shadow: 0 0 16px rgba(255, 255, 255, 0.7);
 }
+
+/* ===================================================================
+   THEME — CARBON
+   Quiet dark. Charcoal on charcoal with a single cool blue accent.
+   No glow, no scanlines. For people who want a calm dark theme.
+   =================================================================== */
+[data-theme="carbon"] {
+  --bg: #1a1a1c;
+  --bg-elev: #232326;
+  --fg: #e8e8ea;
+  --fg-mute: #8c8c92;
+  --fg-faint: #5a5a60;
+  --border: #2c2c30;
+  --border-strong: #3d3d42;
+  --accent: #5e9bff;
+  --accent-fg: #ffffff;
+  --accent-soft: rgba(94, 155, 255, 0.14);
+  --good: #6fdc9b;
+  --error: #ff6b6b;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="carbon"] body {
+  background-image: none;
+}
+
+/* ===================================================================
+   THEME — SYNTHWAVE
+   Hot pink, electric purple, retro sunset. Loud and unapologetic.
+   =================================================================== */
+[data-theme="synthwave"] {
+  --bg: #0e0628;
+  --bg-elev: #1a0e3d;
+  --fg: #f9c0ff;
+  --fg-mute: #b48ed1;
+  --fg-faint: #6e4f8c;
+  --border: #2d1858;
+  --border-strong: #4a2a8c;
+  --accent: #ff2d92;
+  --accent-fg: #ffffff;
+  --accent-soft: rgba(255, 45, 146, 0.18);
+  --good: #00f5ff;
+  --error: #ff5d6d;
+  --shadow-sm: 0 0 0 1px rgba(255, 45, 146, 0.18);
+  --shadow-md: 0 0 32px rgba(255, 45, 146, 0.22);
+}
+
+[data-theme="synthwave"] body {
+  background-image:
+    linear-gradient(180deg, transparent 60%, rgba(255, 45, 146, 0.18) 100%),
+    radial-gradient(ellipse at 50% 110%, #ff8a3c 0%, #ff2d92 22%, #b91dd9 42%, transparent 70%);
+}
+
+[data-theme="synthwave"] .brand-name {
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent), 0 0 2px #00f5ff;
+}
+
+[data-theme="synthwave"] .drop-title,
+[data-theme="synthwave"] .result-hero-metric,
+[data-theme="synthwave"] .preset.active .preset-name {
+  text-shadow: 0 0 10px var(--accent);
+}
+
+[data-theme="synthwave"] .drop-icon {
+  filter: drop-shadow(0 0 10px var(--accent));
+}
+
+[data-theme="synthwave"] .preset.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), 0 0 22px rgba(255, 45, 146, 0.3);
+}
+
+[data-theme="synthwave"] .progress-fill {
+  background: linear-gradient(90deg, #00f5ff, var(--accent));
+  box-shadow: 0 0 12px var(--accent);
+}
+
+[data-theme="synthwave"] .drop-overlay {
+  background: linear-gradient(135deg, var(--accent), #00f5ff);
+}
+
+/* ===================================================================
+   THEME — DRACULA
+   Official Dracula palette. Charcoal-lavender background, soft cream
+   foreground, mauve accent. Familiar to a lot of dev tooling.
+   =================================================================== */
+[data-theme="dracula"] {
+  --bg: #282a36;
+  --bg-elev: #313445;
+  --fg: #f8f8f2;
+  --fg-mute: #a8a8b8;
+  --fg-faint: #6272a4;
+  --border: #44475a;
+  --border-strong: #6272a4;
+  --accent: #bd93f9;
+  --accent-fg: #282a36;
+  --accent-soft: rgba(189, 147, 249, 0.18);
+  --good: #50fa7b;
+  --error: #ff5555;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dracula"] body {
+  background-image: none;
+}
+
+/* ===================================================================
+   THEME — CATPPUCCIN MOCHA
+   Pastel-tinted dark with mauve accents. Very popular with developers.
+   =================================================================== */
+[data-theme="catppuccin"] {
+  --bg: #1e1e2e;
+  --bg-elev: #313244;
+  --fg: #cdd6f4;
+  --fg-mute: #a6adc8;
+  --fg-faint: #6c7086;
+  --border: #313244;
+  --border-strong: #45475a;
+  --accent: #cba6f7;
+  --accent-fg: #1e1e2e;
+  --accent-soft: rgba(203, 166, 247, 0.18);
+  --good: #a6e3a1;
+  --error: #f38ba8;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.35), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="catppuccin"] body {
+  background-image: none;
+}
+
+/* ===================================================================
+   THEME — NORD
+   Cool arctic palette. Polar night background, frost cyan accent.
+   =================================================================== */
+[data-theme="nord"] {
+  --bg: #2e3440;
+  --bg-elev: #3b4252;
+  --fg: #eceff4;
+  --fg-mute: #d8dee9;
+  --fg-faint: #4c566a;
+  --border: #434c5e;
+  --border-strong: #4c566a;
+  --accent: #88c0d0;
+  --accent-fg: #2e3440;
+  --accent-soft: rgba(136, 192, 208, 0.18);
+  --good: #a3be8c;
+  --error: #bf616a;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+[data-theme="nord"] body {
+  background-image: none;
+}
