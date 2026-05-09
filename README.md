@@ -42,3 +42,19 @@ bash bench/run.sh
 ```
 
 Builds a ~22 MB mixed corpus from local files and runs zip, 7zz, rar, and hgr at several settings, three times each, taking the best wall time. Prints a table.
+
+## Releases
+
+Push a tag and GitHub Actions builds and publishes a release with binaries for every supported target:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+Targets:
+
+- CLI — macOS (Apple Silicon, Intel), Linux (x86_64, aarch64), Windows (x86_64)
+- GUI — macOS universal `.app` + `.dmg`, Linux `.deb`/`.AppImage` (x86_64, aarch64), Windows `.msi`/`.exe`
+
+See [.github/workflows/release.yml](.github/workflows/release.yml).
