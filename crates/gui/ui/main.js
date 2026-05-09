@@ -137,6 +137,7 @@ const progressFill = $("progress-fill");
 const progressBar = document.querySelector(".progress");
 const langSel = $("lang");
 const themeSel = $("theme");
+const busyCancel = $("busy-cancel");
 const encryptInput = $("encrypt");
 const encryptFields = $("encrypt-fields");
 const encryptPw = $("encrypt-pw");
@@ -247,8 +248,21 @@ function setBusy(on, label) {
     busyFile.textContent = "";
     busyStats.textContent = "";
     progressBar.classList.add("indeterminate");
+    busyCancel.disabled = false;
+    busyCancel.textContent = t("cancelButton");
   }
 }
+
+busyCancel.addEventListener("click", async () => {
+  if (!busy) return;
+  busyCancel.disabled = true;
+  busyCancel.textContent = t("cancelling");
+  try {
+    await invoke("cancel_op");
+  } catch (e) {
+    console.warn("cancel_op failed", e);
+  }
+});
 
 function fmtBytes(n) {
   if (n < 1024) return `${n} B`;

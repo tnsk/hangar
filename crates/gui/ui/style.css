@@ -127,7 +127,8 @@ body {
   font-feature-settings: "tnum";
 }
 
-#lang {
+#lang,
+#theme {
   background: transparent;
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
@@ -151,7 +152,9 @@ body {
 }
 
 #lang:hover,
-#lang:focus {
+#lang:focus,
+#theme:hover,
+#theme:focus {
   outline: none;
   border-color: var(--accent);
 }
@@ -786,6 +789,35 @@ main {
 .busy-stats {
   flex: none;
   white-space: nowrap;
+}
+
+.busy-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.busy-cancel {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--fg-mute);
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+
+.busy-cancel:hover {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.busy-cancel:disabled {
+  opacity: 0.5;
+  cursor: default;
 }
 
 /* ─── Utility ──────────────────────────────────────────────────────── */

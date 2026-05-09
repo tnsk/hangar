@@ -8,9 +8,37 @@ use serde::Serialize;
 use std::fs::{self, File};
 use std::io::{self, BufReader, BufWriter, Read, Write};
 use std::path::{Path, PathBuf};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 use std::time::{Instant, UNIX_EPOCH};
-use tauri::{AppHandle, Emitter};
+use tauri::{AppHandle, Emitter, State};
 use walkdir::WalkDir;
+
+/// Shared cooperative-cancellation flag. A cancel is requested by flipping
+/// this to `true`; long-running commands (compress/extract) check it at
+/// safe points and abort with `errCancelled`.
+#[derive(Default)]
+struct Cancel(Arc<AtomicBool>);
+
+impl Cancel {
+    fn reset(&self) {
+        self.0.store(false, Ordering::SeqCst);
+    }
+    fn request(&self) {
+        self.0.store(true, Ordering::SeqCst);
+    }
+    fn is_set(&self) -> bool {
+        self.0.load(Ordering::Relaxed)
+    }
+    fn flag(&self) -> Arc<AtomicBool> {
+        Arc::clone(&self.0)
+    }
+}
+
+#[tauri::command]
+fn cancel_op(cancel: State<'_, Cancel>) {
+    cancel.request();
+}
 
 /// Progress event emitted to the frontend during compress/extract.
 #[derive(Serialize, Clone)]
@@ -23,17 +51,23 @@ struct Progress {
     files_total: u64,
 }
 
-/// Read adapter that fires a callback every `threshold` bytes.
+/// Read adapter that fires a callback every `threshold` bytes and aborts
+/// with `Interrupted` if the cancel flag is set. Lets a long single-file
+/// read be cancelled at byte granularity, not just per-file.
 struct ProgressReader<R: Read> {
     inner: R,
     bytes_so_far: u64,
     last_emit: u64,
     threshold: u64,
     on_emit: Box<dyn FnMut(u64) + Send>,
+    cancel: Arc<AtomicBool>,
 }
 
 impl<R: Read> Read for ProgressReader<R> {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+        if self.cancel.load(Ordering::Relaxed) {
+            return Err(io::Error::new(io::ErrorKind::Interrupted, "cancelled"));
+        }
         let n = self.inner.read(buf)?;
         self.bytes_so_far += n as u64;
         if self.bytes_so_far - self.last_emit >= self.threshold {
@@ -217,6 +251,7 @@ async fn probe(archive: String) -> Result<ProbeResult, ErrorPayload> {
 #[tauri::command]
 async fn compress(
     app: AppHandle,
+    cancel: State<'_, Cancel>,
     inputs: Vec<String>,
     output: String,
     level: i32,
@@ -227,6 +262,8 @@ async fn compress(
     // Optional encryption password. Empty/absent = not encrypted.
     password: Option<String>,
 ) -> Result<CompressResult, ErrorPayload> {
+    cancel.reset();
+    let cancel_flag = cancel.flag();
     let archive = PathBuf::from(&output);
     if archive.exists() {
         return Err(ErrorPayload::coded(
@@ -236,11 +273,50 @@ async fn compress(
     }
     let start = Instant::now();
 
+    let result = compress_inner(
+        &app,
+        &cancel_flag,
+        &inputs,
+        &archive,
+        level,
+        threads,
+        solid,
+        long,
+        block_size,
+        password,
+        start,
+    );
+    // Half-written archive is unrecoverable; wipe it on any error.
+    if result.is_err() && archive.exists() {
+        let _ = fs::remove_file(&archive);
+    }
+    // Translate io errors that happened *because* the user cancelled into a
+    // dedicated errCancelled code so the UI can localise it cleanly.
+    if cancel.is_set() && result.is_err() {
+        return Err(ErrorPayload::coded("errCancelled", "operation cancelled"));
+    }
+    result
+}
+
+fn compress_inner(
+    app: &AppHandle,
+    cancel: &Arc<AtomicBool>,
+    inputs: &[String],
+    archive: &Path,
+    level: i32,
+    threads: u32,
+    solid: bool,
+    long: bool,
+    block_size: u64,
+    password: Option<String>,
+    start: Instant,
+) -> Result<CompressResult, ErrorPayload> {
+
     // Pre-walk to total up bytes/files for a determinate progress bar.
     let mut total_bytes: u64 = 0;
     let mut total_files: u64 = 0;
     let mut canonical_inputs: Vec<PathBuf> = Vec::with_capacity(inputs.len());
-    for input_str in &inputs {
+    for input_str in inputs {
         let input = PathBuf::from(input_str).canonicalize().map_err(|e| {
             ErrorPayload::generic(format!("resolve {}: {}", input_str, e))
         })?;
@@ -294,6 +370,11 @@ async fn compress(
 
     for input in &canonical_inputs {
         for ent in WalkDir::new(input).follow_links(false) {
+            // Per-file cancel check — keeps the cancel responsive on archives
+            // of many small files where ProgressReader rarely runs.
+            if cancel.load(Ordering::Relaxed) {
+                return Err(ErrorPayload::coded("errCancelled", "operation cancelled"));
+            }
             let ent = ent?;
             let path = ent.path();
             let meta = ent.metadata()?;
@@ -337,6 +418,7 @@ async fn compress(
                     last_emit: 0,
                     threshold: PROGRESS_CHUNK,
                     on_emit,
+                    cancel: Arc::clone(cancel),
                 };
                 writer.add_file(
                     &arc_path,
@@ -383,10 +465,13 @@ async fn compress(
 #[tauri::command]
 async fn extract(
     app: AppHandle,
+    cancel: State<'_, Cancel>,
     archive: String,
     output_dir: String,
     password: Option<String>,
 ) -> Result<ExtractResult, ErrorPayload> {
+    cancel.reset();
+    let cancel_flag = cancel.flag();
     let archive = PathBuf::from(&archive);
     let output = PathBuf::from(&output_dir);
     let start = Instant::now();
@@ -449,39 +534,50 @@ async fn extract(
     // Files via for_each_file so each shared frame decodes once.
     let output_for_cb = output.clone();
     let app_for_cb = app.clone();
+    let cancel_for_cb = cancel_flag.clone();
     let mut bytes_done: u64 = 0;
     let mut files_done: u64 = 0;
-    reader
-        .for_each_file(|_, entry, bytes| {
-            let dest = output_for_cb.join(&entry.path);
-            if let Some(parent) = dest.parent() {
-                fs::create_dir_all(parent).ok();
+    let res = reader.for_each_file(|_, entry, bytes| {
+        if cancel_for_cb.load(Ordering::Relaxed) {
+            return Err(hangar_core::Error::Io(io::Error::new(
+                io::ErrorKind::Interrupted,
+                "cancelled",
+            )));
+        }
+        let dest = output_for_cb.join(&entry.path);
+        if let Some(parent) = dest.parent() {
+            fs::create_dir_all(parent).ok();
+        }
+        let mut out = BufWriter::new(File::create(&dest)?);
+        out.write_all(bytes)?;
+        out.flush()?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            if entry.mode != 0 {
+                let _ = fs::set_permissions(&dest, fs::Permissions::from_mode(entry.mode));
             }
-            let mut out = BufWriter::new(File::create(&dest)?);
-            out.write_all(bytes)?;
-            out.flush()?;
-            #[cfg(unix)]
-            {
-                use std::os::unix::fs::PermissionsExt;
-                if entry.mode != 0 {
-                    let _ = fs::set_permissions(&dest, fs::Permissions::from_mode(entry.mode));
-                }
-            }
-            bytes_done += entry.uncompressed_size;
-            files_done += 1;
-            let _ = app_for_cb.emit(
-                "progress",
-                Progress {
-                    phase: "extract",
-                    current_bytes: bytes_done,
-                    total_bytes,
-                    current_file: Some(entry.path.clone()),
-                    files_done,
-                    files_total: total_files,
-                },
-            );
-            Ok(())
-        })?;
+        }
+        bytes_done += entry.uncompressed_size;
+        files_done += 1;
+        let _ = app_for_cb.emit(
+            "progress",
+            Progress {
+                phase: "extract",
+                current_bytes: bytes_done,
+                total_bytes,
+                current_file: Some(entry.path.clone()),
+                files_done,
+                files_total: total_files,
+            },
+        );
+        Ok(())
+    });
+
+    if cancel.is_set() {
+        return Err(ErrorPayload::coded("errCancelled", "operation cancelled"));
+    }
+    res?;
 
     Ok(ExtractResult {
         entries: entries.len() as u64,
@@ -532,8 +628,11 @@ fn list(archive: String, password: Option<String>) -> Result<ListResult, ErrorPa
 
 fn main() {
     tauri::Builder::default()
+        .manage(Cancel::default())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![compress, extract, list, probe])
+        .invoke_handler(tauri::generate_handler![
+            compress, extract, list, probe, cancel_op
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -78,6 +78,9 @@ window.HANGAR_I18N = {
     errUtf8: "Invalid text encoding in archive metadata",
     errCrypto: "Encryption error",
     errAlreadyExists: "A file with that name already exists",
+    errCancelled: "Cancelled",
+    cancelButton: "Cancel",
+    cancelling: "cancelling…",
   },
   tr: {
     tagline: "zipden küçük · rar'dan hızlı · maks ayarda 7z'yi geçer",
@@ -146,6 +149,9 @@ window.HANGAR_I18N = {
     errUtf8: "Arşiv meta verisinde geçersiz metin kodlaması",
     errCrypto: "Şifreleme hatası",
     errAlreadyExists: "Aynı isimde bir dosya zaten var",
+    errCancelled: "İptal edildi",
+    cancelButton: "İptal",
+    cancelling: "iptal ediliyor…",
   },
   de: {
     tagline: "kleiner als zip · schneller als rar · schlägt 7z bei max",
@@ -214,6 +220,9 @@ window.HANGAR_I18N = {
     errUtf8: "Ungültige Textkodierung in den Archiv-Metadaten",
     errCrypto: "Verschlüsselungsfehler",
     errAlreadyExists: "Eine Datei mit diesem Namen existiert bereits",
+    errCancelled: "Abgebrochen",
+    cancelButton: "Abbrechen",
+    cancelling: "Abbrechen…",
   },
   fr: {
     tagline: "plus petit que zip · plus rapide que rar · bat 7z au max",
@@ -282,6 +291,9 @@ window.HANGAR_I18N = {
     errUtf8: "Encodage de texte invalide dans les métadonnées",
     errCrypto: "Erreur de chiffrement",
     errAlreadyExists: "Un fichier portant ce nom existe déjà",
+    errCancelled: "Annulé",
+    cancelButton: "Annuler",
+    cancelling: "annulation…",
   },
   ru: {
     tagline: "меньше zip · быстрее rar · обходит 7z на максимуме",
@@ -350,6 +362,9 @@ window.HANGAR_I18N = {
     errUtf8: "Неверная кодировка в метаданных архива",
     errCrypto: "Ошибка шифрования",
     errAlreadyExists: "Файл с таким именем уже существует",
+    errCancelled: "Отменено",
+    cancelButton: "Отмена",
+    cancelling: "отмена…",
   },
   es: {
     tagline: "más pequeño que zip · más rápido que rar · supera a 7z al máximo",
@@ -418,6 +433,9 @@ window.HANGAR_I18N = {
     errUtf8: "Codificación de texto inválida en los metadatos",
     errCrypto: "Error de cifrado",
     errAlreadyExists: "Ya existe un archivo con ese nombre",
+    errCancelled: "Cancelado",
+    cancelButton: "Cancelar",
+    cancelling: "cancelando…",
   },
   ar: {
     tagline: "أصغر من zip · أسرع من rar · يتفوق على 7z في الحد الأقصى",
@@ -486,5 +504,8 @@ window.HANGAR_I18N = {
     errUtf8: "ترميز نص غير صالح في البيانات الوصفية",
     errCrypto: "خطأ في التشفير",
     errAlreadyExists: "يوجد ملف بهذا الاسم بالفعل",
+    errCancelled: "أُلغي",
+    cancelButton: "إلغاء",
+    cancelling: "جارٍ الإلغاء…",
   },
 };
