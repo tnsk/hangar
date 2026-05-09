@@ -1183,3 +1183,54 @@ main {
 [data-theme="nord"] body {
   background-image: none;
 }
+
+/* ===================================================================
+   THEME — TÜRKİYE
+   Bayrağın kırmızısı zemin, beyaz tipografi, HANGAR'ın başında ay yıldız.
+   =================================================================== */
+[data-theme="turkiye"] {
+  --bg: #c8102e;
+  --bg-elev: #a30821;
+  --fg: #ffffff;
+  --fg-mute: #ffd6dc;
+  --fg-faint: #ff9faf;
+  --border: rgba(255, 255, 255, 0.22);
+  --border-strong: rgba(255, 255, 255, 0.5);
+  --accent: #ffffff;
+  --accent-fg: #c8102e;
+  --accent-soft: rgba(255, 255, 255, 0.18);
+  --good: #ffe55b;
+  --error: #ffe55b;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.18), 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="turkiye"] body {
+  background-image: none;
+}
+
+/* Marka yazısının başına ay yıldız */
+[data-theme="turkiye"] .brand-name::before {
+  content: "☪";
+  margin-right: 10px;
+  font-size: 17px;
+  vertical-align: -1px;
+}
+
+[data-theme="turkiye"] .preset.active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+[data-theme="turkiye"] .preset.active .preset-name {
+  color: var(--fg);
+}
+
+[data-theme="turkiye"] .progress-fill {
+  background: var(--accent);
+}
+
+/* Sonuç kartı: başarı beyaz, hata sarı kenar */
+[data-theme="turkiye"] .result.error {
+  border-left-color: var(--error);
+}
