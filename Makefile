@@ -2,7 +2,7 @@ CARGO ?= cargo
 
 .DEFAULT_GOAL := release
 
-.PHONY: help release debug cli gui run app icons bench test fmt clippy clean install-tauri-cli
+.PHONY: help release debug cli gui run dev app icons bench test fmt clippy clean install-tauri-cli
 
 help:
 	@printf 'targets:\n'
@@ -11,6 +11,7 @@ help:
 	@printf '  cli                build the hgr CLI (target/release/hgr)\n'
 	@printf '  gui                build the GUI binary (target/release/hangar)\n'
 	@printf '  run                run the GUI in release mode\n'
+	@printf '  dev                run the GUI in debug mode (faster compile)\n'
 	@printf '  app                bundle a native app via cargo tauri build\n'
 	@printf '                     (requires cargo-tauri-cli; .app/.dmg on macOS,\n'
 	@printf '                      .msi/.exe on Windows, .deb/.AppImage on Linux)\n'
@@ -36,6 +37,9 @@ gui:
 
 run: gui
 	./target/release/hangar
+
+dev:
+	$(CARGO) run -p hangar-gui
 
 app:
 	cd crates/gui && $(CARGO) tauri build
