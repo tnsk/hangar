@@ -119,14 +119,6 @@ body {
   gap: 16px;
 }
 
-.tagline {
-  color: var(--fg-mute);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: lowercase;
-  font-feature-settings: "tnum";
-}
-
 #lang,
 #theme {
   background: transparent;
@@ -159,11 +151,6 @@ body {
   border-color: var(--accent);
 }
 
-@media (max-width: 720px) {
-  .tagline {
-    display: none;
-  }
-}
 
 /* ─── Main ─────────────────────────────────────────────────────────── */
 main {

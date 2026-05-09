@@ -12,7 +12,6 @@ window.HANGAR_LANGS = [
 
 window.HANGAR_I18N = {
   en: {
-    tagline: "smaller than zip · faster than rar · beats 7z on max",
     dropTitle: "Drop files or folders to compress",
     dropClickHint: "or click to browse",
     dropOverlay: "DROP",
@@ -83,7 +82,6 @@ window.HANGAR_I18N = {
     cancelling: "cancelling…",
   },
   tr: {
-    tagline: "zipden küçük · rar'dan hızlı · maks ayarda 7z'yi geçer",
     dropTitle: "Sıkıştırmak için dosya veya klasör bırak",
     dropClickHint: "ya da tıklayıp seç",
     dropOverlay: "BIRAK",
@@ -154,7 +152,6 @@ window.HANGAR_I18N = {
     cancelling: "iptal ediliyor…",
   },
   de: {
-    tagline: "kleiner als zip · schneller als rar · schlägt 7z bei max",
     dropTitle: "Dateien oder Ordner zum Komprimieren ablegen",
     dropClickHint: "oder zum Auswählen klicken",
     dropOverlay: "ABLEGEN",
@@ -225,7 +222,6 @@ window.HANGAR_I18N = {
     cancelling: "Abbrechen…",
   },
   fr: {
-    tagline: "plus petit que zip · plus rapide que rar · bat 7z au max",
     dropTitle: "Déposez des fichiers ou dossiers à compresser",
     dropClickHint: "ou cliquez pour parcourir",
     dropOverlay: "DÉPOSER",
@@ -296,7 +292,6 @@ window.HANGAR_I18N = {
     cancelling: "annulation…",
   },
   ru: {
-    tagline: "меньше zip · быстрее rar · обходит 7z на максимуме",
     dropTitle: "Перетащите файлы или папки для сжатия",
     dropClickHint: "или нажмите, чтобы выбрать",
     dropOverlay: "БРОСИТЬ",
@@ -367,7 +362,6 @@ window.HANGAR_I18N = {
     cancelling: "отмена…",
   },
   es: {
-    tagline: "más pequeño que zip · más rápido que rar · supera a 7z al máximo",
     dropTitle: "Suelta archivos o carpetas para comprimir",
     dropClickHint: "o haz clic para examinar",
     dropOverlay: "SOLTAR",
@@ -438,7 +432,6 @@ window.HANGAR_I18N = {
     cancelling: "cancelando…",
   },
   ar: {
-    tagline: "أصغر من zip · أسرع من rar · يتفوق على 7z في الحد الأقصى",
     dropTitle: "أفلت ملفات أو مجلدات للضغط",
     dropClickHint: "أو انقر للتصفح",
     dropOverlay: "أفلت",
