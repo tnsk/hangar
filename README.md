@@ -35,3 +35,21 @@ cargo build --release
 ```
 
 Or grab a prebuilt binary for your platform from [Releases](https://github.com/tnsk/hangar/releases).
+
+## CLI
+
+```bash
+hgr c archive.hgr file1 dir/        # create
+hgr x archive.hgr -o out/           # extract
+hgr l archive.hgr                   # list contents
+hgr t archive.hgr                   # verify integrity
+```
+
+Flags worth knowing:
+
+- `-l N` — compression level, 1–22 (default 3)
+- `--solid` — pack files into shared frames; pair with `--long` for a 128 MB match window. Best ratio, biggest win on archives with similar files
+- `-T N` — worker threads (default: all cores)
+- `-e` — encrypt with a password (prompted; use `--password-from FILE` for scripts)
+
+Run `hgr <command> --help` for the full list.
