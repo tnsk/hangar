@@ -117,13 +117,6 @@ jobs:
         with:
           shared-key: gui-${{ matrix.label }}
 
-      - name: Install tauri-cli
-        run: cargo install tauri-cli --version "^2.0" --locked
-
-      - name: Generate platform icon variants
-        working-directory: crates/gui
-        run: cargo tauri icon icons/icon.png
-
       - name: Build and bundle
         uses: tauri-apps/tauri-action@v0
         env:

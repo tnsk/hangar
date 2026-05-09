@@ -435,9 +435,9 @@ async fn extract(
                 if let Some(parent) = dest.parent() {
                     fs::create_dir_all(parent).ok();
                 }
-                let target = e.link_target.as_deref().unwrap_or("");
                 #[cfg(unix)]
                 {
+                    let target = e.link_target.as_deref().unwrap_or("");
                     let _ = fs::remove_file(&dest);
                     std::os::unix::fs::symlink(target, &dest)?;
                 }
