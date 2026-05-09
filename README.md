@@ -1,8 +1,32 @@
 # hangar
 
-Archive tool. Smaller than ZIP, faster than RAR, beats 7z on max ratio.
+A modern archive tool. Compresses tighter than ZIP, beats 7z on max ratio, and decompresses faster than all of them. Pick a preset, drop your files, get a `.hgr` archive.
 
-Engine is [Zstandard](https://facebook.github.io/zstd/) wrapped in a small random-access container (`.hgr`). Two surfaces share the same Rust core: a CLI (`hgr`) and a Tauri desktop app (`Hangar`).
+## What's in the box
+
+- **Desktop app** — drag and drop to compress, drop a `.hgr` back in to extract. Three presets (Fast / Balanced / Max) cover almost everyone.
+- **CLI** (`hgr`) — same engine, scriptable.
+- **7 languages**: Turkish, English, German, French, Russian, Spanish, Arabic (with RTL layout).
+- **3 themes**: Hangar (default), Matrix (phosphor terminal), Tron (cyan grid).
+- **Optional password encryption** — XChaCha20-Poly1305 AEAD with keys derived via Argon2id. The whole archive (frames + index) is wrapped, so even file names and sizes stay private.
+
+## Benchmark
+
+22 MB mixed corpus, best of three runs:
+
+| Tool  | Settings           |     Output | % of input | Compress | Extract |
+| ----- | ------------------ | ---------: | ---------: | -------: | ------: |
+| zip   | default            |    7.97 MB |      35.2% |    0.45s |   0.10s |
+| zip   | -9                 |    7.95 MB |      35.1% |    0.66s |   0.10s |
+| rar   | -m3                |    6.36 MB |      28.1% |    0.17s |   0.04s |
+| rar   | -m5                |    6.30 MB |      27.8% |    0.25s |   0.04s |
+| 7zz   | -mx=5              |    2.93 MB |      12.9% |    1.85s |   0.07s |
+| 7zz   | -mx=9              |    2.90 MB |      12.8% |    2.09s |   0.07s |
+| hgr   | -3 (default)       |    7.61 MB |      33.6% |    0.05s |   0.02s |
+| hgr   | -9 --solid --long  |    3.26 MB |      14.4% |    0.09s |   0.02s |
+| hgr   | -19 --solid --long |    2.85 MB |      12.6% |    2.45s |   0.02s |
+
+`bash bench/run.sh` reproduces this on your machine.
 
 ## Build
 
@@ -10,51 +34,4 @@ Engine is [Zstandard](https://facebook.github.io/zstd/) wrapped in a small rando
 cargo build --release
 ```
 
-Outputs:
-
-- `target/release/hgr` — CLI binary
-- `target/release/hangar` — desktop app (run directly, or build a `.app` with `cargo tauri build`)
-
-## CLI
-
-```bash
-hgr c archive.hgr file1 dir/ [-l 9] [--solid] [--long] [-e]
-hgr x archive.hgr [-o outdir/]
-hgr l archive.hgr
-hgr t archive.hgr
-```
-
-`-l` picks the compression level (1–22, default 3). `--solid` packs files into shared frames for cross-file dedup; pair with `--long` to widen the match window to 128 MB. `-e` encrypts the archive with a password (XChaCha20-Poly1305 keyed via Argon2id).
-
-For scripts, `--password-from FILE` reads the password from a file's first line.
-
-## Layout
-
-- `crates/core/` — `hangar-core` library: format, codec, encryption, read/write
-- `crates/cli/` — `hgr` binary
-- `crates/gui/` — `Hangar` desktop app
-- `bench/` — head-to-head benchmark vs zip / 7zz / rar
-
-## Benchmark
-
-```bash
-bash bench/run.sh
-```
-
-Builds a ~22 MB mixed corpus from local files and runs zip, 7zz, rar, and hgr at several settings, three times each, taking the best wall time. Prints a table.
-
-## Releases
-
-Push a tag and GitHub Actions builds and publishes a release with binaries for every supported target:
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-Targets:
-
-- CLI — macOS (Apple Silicon, Intel), Linux (x86_64, aarch64), Windows (x86_64)
-- GUI — macOS universal `.app` + `.dmg`, Linux `.deb`/`.AppImage` (x86_64, aarch64), Windows `.msi`/`.exe`
-
-See [.github/workflows/release.yml](.github/workflows/release.yml).
+Or grab a prebuilt binary for your platform from [Releases](https://github.com/tnsk/hangar/releases).
