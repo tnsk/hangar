@@ -30,13 +30,58 @@ A modern archive tool with a desktop app and a CLI. Pick a preset, drop your fil
 
 `bash bench/run.sh` reproduces this on your machine.
 
-## Build
+## Install
+
+### CLI (`hgr`) — single binary, no extraction needed
+
+Pick the file matching your machine from [Releases](https://github.com/tnsk/hangar/releases), drop it on your `PATH`, run it.
+
+**Linux (Arch, Debian, Ubuntu, Fedora — anything glibc, x86_64):**
+
+```bash
+curl -L -o hgr https://github.com/tnsk/hangar/releases/latest/download/hgr-linux-x86_64
+chmod +x hgr
+sudo install -m 0755 hgr /usr/local/bin/hgr
+hgr --version
+```
+
+ARM Linux (Raspberry Pi, Asahi, ARM laptops): swap `linux-x86_64` → `linux-arm64`.
+
+**macOS (Apple Silicon):**
+
+```bash
+curl -L -o hgr https://github.com/tnsk/hangar/releases/latest/download/hgr-macos-arm64
+chmod +x hgr
+xattr -d com.apple.quarantine hgr 2>/dev/null || true   # remove Gatekeeper flag
+sudo install -m 0755 hgr /usr/local/bin/hgr
+```
+
+Intel Macs: swap `macos-arm64` → `macos-x86_64`.
+
+**Windows (PowerShell):**
+
+```powershell
+irm https://github.com/tnsk/hangar/releases/latest/download/hgr-windows-x86_64.exe -OutFile hgr.exe
+.\hgr.exe --version
+# Move to a folder on your PATH, e.g. C:\Tools\hgr.exe
+```
+
+### GUI (`Hangar`) — native installer per OS
+
+| Platform | File | Install |
+|---|---|---|
+| macOS (Apple Silicon + Intel) | `Hangar_*_universal.dmg` | open the dmg, drag `Hangar.app` to Applications |
+| Linux (Debian/Ubuntu) | `hangar_*_amd64.deb` (or `_arm64`) | `sudo dpkg -i hangar_*.deb` |
+| Linux (Arch, Fedora, anything else) | `hangar_*_amd64.AppImage` (or `_arm64`) | `sudo pacman -S fuse2` (Arch only, one-time), then `chmod +x hangar_*.AppImage && ./hangar_*.AppImage` |
+| Windows | `Hangar_*_x64-setup.exe` or `.msi` | run the setup |
+
+### Build from source
 
 ```bash
 cargo build --release
 ```
 
-Or grab a prebuilt binary for your platform from [Releases](https://github.com/tnsk/hangar/releases).
+Outputs `target/release/hgr` (CLI) and `target/release/hangar` (GUI binary). For a packaged GUI (`.app` / `.dmg` / `.deb` / `.AppImage` / `.msi`), see the [Makefile](Makefile) (`make app`).
 
 ## CLI
 

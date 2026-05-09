@@ -16,8 +16,13 @@ env:
   TAG: ${{ github.event.inputs.tag || github.ref_name }}
 
 jobs:
+  # ───────────────────────────────────────────────────────────────────────
+  # CLI — produces a single self-contained `hgr` binary per target,
+  # uploaded to the release with a friendly name like
+  # `hgr-linux-x86_64` so users can chmod+x and run directly.
+  # ───────────────────────────────────────────────────────────────────────
   cli:
-    name: CLI ${{ matrix.target }}
+    name: CLI · ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -25,14 +30,19 @@ jobs:
         include:
           - os: macos-latest
             target: aarch64-apple-darwin
+            platform: macos-arm64
           - os: macos-latest
             target: x86_64-apple-darwin
+            platform: macos-x86_64
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            platform: linux-x86_64
           - os: ubuntu-22.04-arm
             target: aarch64-unknown-linux-gnu
+            platform: linux-arm64
           - os: windows-latest
             target: x86_64-pc-windows-msvc
+            platform: windows-x86_64
     steps:
       - uses: actions/checkout@v4
 
@@ -42,25 +52,28 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: cli-${{ matrix.target }}
+          shared-key: cli-${{ matrix.platform }}
 
       - name: Build
         run: cargo build --release -p hangar-cli --target ${{ matrix.target }}
 
-      - name: Package (Unix)
+      - name: Stage binary (Unix)
         if: matrix.os != 'windows-latest'
         shell: bash
         run: |
           mkdir -p dist
-          tar -C target/${{ matrix.target }}/release -czf dist/hgr-${{ matrix.target }}.tar.gz hgr
+          install -m 0755 \
+            target/${{ matrix.target }}/release/hgr \
+            dist/hgr-${{ matrix.platform }}
 
-      - name: Package (Windows)
+      - name: Stage binary (Windows)
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
-          Compress-Archive -Path target/${{ matrix.target }}/release/hgr.exe `
-            -DestinationPath dist/hgr-${{ matrix.target }}.zip
+          Copy-Item `
+            target/${{ matrix.target }}/release/hgr.exe `
+            -Destination dist/hgr-${{ matrix.platform }}.exe
 
       - name: Upload to release
         uses: softprops/action-gh-release@v2
@@ -71,27 +84,34 @@ jobs:
           fail_on_unmatched_files: true
           files: dist/*
 
+  # ───────────────────────────────────────────────────────────────────────
+  # GUI — Tauri produces native installers per platform. tauri-action
+  # uploads them to the same draft release alongside the CLI binaries.
+  #   macOS:   universal .dmg + .app.tar.gz
+  #   Linux:   .deb  +  .AppImage  (x86_64 and arm64)
+  #   Windows: .msi  +  .exe (NSIS setup)
+  # ───────────────────────────────────────────────────────────────────────
   gui:
-    name: GUI ${{ matrix.label }}
+    name: GUI · ${{ matrix.platform }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: macos-latest
-            label: macos-universal
+            platform: macos-universal
             rust-targets: aarch64-apple-darwin,x86_64-apple-darwin
             tauri-args: '--target universal-apple-darwin'
           - os: ubuntu-latest
-            label: linux-x86_64
+            platform: linux-x86_64
             rust-targets: x86_64-unknown-linux-gnu
             tauri-args: ''
           - os: ubuntu-22.04-arm
-            label: linux-aarch64
+            platform: linux-arm64
             rust-targets: aarch64-unknown-linux-gnu
             tauri-args: ''
           - os: windows-latest
-            label: windows-x86_64
+            platform: windows-x86_64
             rust-targets: x86_64-pc-windows-msvc
             tauri-args: ''
     steps:
@@ -115,7 +135,7 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
         with:
-          shared-key: gui-${{ matrix.label }}
+          shared-key: gui-${{ matrix.platform }}
 
       - name: Build and bundle
         uses: tauri-apps/tauri-action@v0
@@ -129,13 +149,13 @@ jobs:
           prerelease: false
           args: ${{ matrix.tauri-args }}
 
+  # Flip the draft to published once every platform job has uploaded.
   publish:
     name: Publish release
     needs: [cli, gui]
     runs-on: ubuntu-latest
     steps:
-      - name: Flip draft -> published
-        uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG }}
           name: ${{ env.TAG }}
