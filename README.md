@@ -40,18 +40,78 @@ Or grab a prebuilt binary for your platform from [Releases](https://github.com/t
 
 ## CLI
 
+### Basic usage
+
 ```bash
-hgr c archive.hgr file1 dir/        # create
-hgr x archive.hgr -o out/           # extract
-hgr l archive.hgr                   # list contents
-hgr t archive.hgr                   # verify integrity
+hgr c <archive.hgr> <inputs...>     # create
+hgr x <archive.hgr> [-o <dir>]      # extract
+hgr l <archive.hgr>                 # list contents
+hgr t <archive.hgr>                 # verify integrity (hashes every file)
 ```
 
-Flags worth knowing:
+Inputs can be any mix of files and directories; whatever you list is walked recursively.
 
-- `-l N` — compression level, 1–22 (default 3)
-- `--solid` — pack files into shared frames; pair with `--long` for a 128 MB match window. Best ratio, biggest win on archives with similar files
-- `-T N` — worker threads (default: all cores)
-- `-e` — encrypt with a password (prompted; use `--password-from FILE` for scripts)
+### Three preset recipes
 
-Run `hgr <command> --help` for the full list.
+```bash
+# Fast — zip-class speed, smaller than zip
+hgr c backup.hgr ~/Documents
+
+# Balanced — sweet spot: near-7z ratio, still fast
+hgr c backup.hgr -l 9 --solid --long ~/Documents
+
+# Max — beats 7z on max ratio, slow
+hgr c backup.hgr -l 19 --solid --long ~/Documents
+```
+
+### Flags
+
+| Flag | What it does | Default |
+|---|---|---|
+| `-l N` | Compression level (1–22). Higher = smaller, slower. | `3` |
+| `--solid` | Pack files into shared zstd frames so cross-file duplicates collapse. Trades single-file extract speed for ratio. | off |
+| `--long` | Widen zstd's match window to 128 MB. Pair with `--solid` to catch repeats across many files. | off |
+| `-T N` | Worker threads. `0` disables MT. | all cores |
+| `-e` / `--encrypt` | Wrap the archive in XChaCha20-Poly1305; prompts for a password. | off |
+| `--password-from <FILE>` | Read the password from a file (for scripts/CI). | — |
+| `--block-size <BYTES>` | Target raw bytes per solid block. Bigger blocks = better ratio, slower single-file extract. | 64 MiB |
+
+### Practical examples
+
+```bash
+# Encrypted archive — prompts for the password twice (entry + confirm)
+hgr c personal.hgr -e -l 9 --solid --long ~/Documents
+
+# Heavy cross-file redundancy (build artifacts, logs, similar binaries)
+hgr c logs.hgr -l 19 --solid --long /var/log
+
+# Single-threaded — friendly on a shared server
+hgr c quiet.hgr -T 1 -l 9 ~/work
+
+# Multiple inputs into one archive
+hgr c bundle.hgr README.md src/ docs/ .config
+
+# Headless / CI — read password from a file (mind permissions)
+echo "$BACKUP_PASSWORD" > /tmp/pw && chmod 600 /tmp/pw
+hgr c nightly.hgr -e --password-from /tmp/pw -l 19 --solid --long /var/data
+shred -u /tmp/pw
+
+# Extract elsewhere
+hgr x backup.hgr -o ~/restored/
+
+# Inspect without extracting
+hgr l backup.hgr     # path, size, frame info
+hgr t backup.hgr     # streams every file through the codec, verifies xxh3 hashes
+```
+
+### Encryption notes
+
+- The whole archive is wrapped — frames **and** the index. File names, sizes, and timestamps stay private.
+- `x`, `l`, and `t` auto-detect encryption and prompt for the password.
+- A wrong password fails fast with `wrong password, or the archive has been tampered with`. No partial decryption is exposed.
+
+### Recommendation
+
+For most jobs, **`-l 9 --solid --long`** is the right default: small output, still fast to compress, very fast to extract. Drop `--solid` only if you don't have any repeated content (e.g., one large video). Add `-e` whenever the contents shouldn't be readable on disk.
+
+Run `hgr <command> --help` for the full list of flags.
