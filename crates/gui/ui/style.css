@@ -1190,31 +1190,38 @@ main {
    =================================================================== */
 [data-theme="turkiye"] {
   --bg: #c8102e;
-  --bg-elev: #a30821;
+  --bg-elev: #7a0817;
   --fg: #ffffff;
-  --fg-mute: #ffd6dc;
-  --fg-faint: #ff9faf;
+  --fg-mute: rgba(255, 255, 255, 0.78);
+  --fg-faint: rgba(255, 255, 255, 0.48);
   --border: rgba(255, 255, 255, 0.22);
   --border-strong: rgba(255, 255, 255, 0.5);
   --accent: #ffffff;
   --accent-fg: #c8102e;
-  --accent-soft: rgba(255, 255, 255, 0.18);
-  --good: #ffe55b;
-  --error: #ffe55b;
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
-  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.18), 0 8px 24px rgba(0, 0, 0, 0.2);
+  --accent-soft: rgba(255, 255, 255, 0.16);
+  --good: #ffd75a;
+  --error: #ffd75a;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 [data-theme="turkiye"] body {
   background-image: none;
 }
 
-/* Marka yazısının başına ay yıldız */
+/* Marka yazısının başına ay yıldız — daha kalın ve baskın */
 [data-theme="turkiye"] .brand-name::before {
   content: "☪";
   margin-right: 10px;
-  font-size: 17px;
+  font-size: 19px;
+  font-weight: 900;
   vertical-align: -1px;
+}
+
+/* Drop hint chip artık beyaz transparan değil de net beyaz, kırmızıda göze çarpsın */
+[data-theme="turkiye"] .drop-hint code {
+  background: var(--accent);
+  color: var(--accent-fg);
 }
 
 [data-theme="turkiye"] .preset.active {
