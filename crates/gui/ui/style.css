@@ -895,7 +895,7 @@ main {
   display: none;
   position: fixed;
   inset: 0;
-  z-index: -1;
+  z-index: 0;
   pointer-events: none;
 }
 
@@ -903,13 +903,16 @@ main {
   display: block;
 }
 
-[data-theme="matrix"] body {
+/* Lift every body child above the rain canvas. position: relative + z-index
+   makes them participate in stacking; the canvas (z-index: 0, positioned)
+   stays underneath as a backdrop. */
+[data-theme="matrix"] body > *:not(.matrix-rain) {
   position: relative;
-  z-index: 0;
+  z-index: 1;
 }
 
-/* Solid backgrounds on lifted surfaces so the rain stays a backdrop, not
-   a wash that bleeds into the text underneath. */
+/* Lifted surfaces get solid backgrounds so the rain doesn't bleed into the
+   text underneath them. */
 [data-theme="matrix"] .topbar,
 [data-theme="matrix"] .drop-zone,
 [data-theme="matrix"] .preset,
