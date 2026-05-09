@@ -1268,3 +1268,29 @@ main {
   box-shadow: 0 0 8px var(--accent), 0 0 14px rgba(212, 24, 30, 0.5);
   vertical-align: 1px;
 }
+
+/* ===================================================================
+   THEME — MONOKAI
+   Sublime'ın klasiği: sıcak zeytin gri zemin, off-white yazı, vurguda
+   o ikonik magenta. Yan vurgular Monokai'nın kendi paletinden.
+   =================================================================== */
+[data-theme="monokai"] {
+  --bg: #272822;
+  --bg-elev: #3e3d32;
+  --fg: #f8f8f2;
+  --fg-mute: #a59f85;
+  --fg-faint: #75715e;
+  --border: #3e3d32;
+  --border-strong: #75715e;
+  --accent: #f92672;
+  --accent-fg: #272822;
+  --accent-soft: rgba(249, 38, 114, 0.15);
+  --good: #a6e22e;
+  --error: #fd971f;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="monokai"] body {
+  background-image: none;
+}

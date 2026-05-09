@@ -67,6 +67,7 @@ const THEMES = [
   { id: "synthwave", name: "Synthwave" },
   { id: "dracula", name: "Dracula" },
   { id: "catppuccin", name: "Catppuccin" },
+  { id: "monokai", name: "Monokai" },
   { id: "nord", name: "Nord" },
   { id: "terminator", name: "Terminator" },
 ];

@@ -7,7 +7,7 @@ A modern archive tool with a desktop app and a CLI. Pick a preset, drop your fil
 - **Desktop app** — drag and drop to compress, drop a `.hgr` back in to extract. Three presets (Fast / Balanced / Max) cover almost everyone.
 - **CLI** (`hgr`) — same engine, scriptable.
 - **7 languages**: Turkish, English, German, French, Russian, Spanish, Arabic (with RTL layout).
-- **9 themes**: Hangar (default warm light), Carbon (quiet dark), Matrix (phosphor terminal with falling glyphs), Tron (cyan grid), Synthwave (pink/purple sunset), Dracula, Catppuccin, Nord, Terminator (T-800 red on near-black).
+- **10 themes**: Hangar (default warm light), Carbon (quiet dark), Matrix (phosphor terminal with falling glyphs), Tron (cyan grid), Synthwave (pink/purple sunset), Dracula, Catppuccin, Monokai, Nord, Terminator (T-800 red on near-black).
 - **Optional password encryption** — XChaCha20-Poly1305 AEAD with keys derived via Argon2id. The whole archive (frames + index) is wrapped, so even file names and sizes stay private.
 
 ## Benchmark
