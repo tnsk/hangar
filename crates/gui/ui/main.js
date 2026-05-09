@@ -86,7 +86,85 @@ function applyTheme() {
   } else {
     document.documentElement.setAttribute("data-theme", currentTheme);
   }
+  if (currentTheme === "matrix") startMatrixRain();
+  else stopMatrixRain();
 }
+
+// ─── Matrix digital rain ─────────────────────────────────────────────
+// Canvas-painted falling glyphs sampled from "tnsk/hangar". Only running
+// while the Matrix theme is active.
+const matrixCanvas = document.getElementById("matrix-rain");
+const matrixCtx = matrixCanvas.getContext("2d");
+const MATRIX_CHARS = "tnsk/hangar".split("");
+const MATRIX_CELL = 16;
+let matrixDrops = [];
+let matrixRaf = null;
+
+function sizeMatrixCanvas() {
+  const dpr = window.devicePixelRatio || 1;
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  matrixCanvas.width = Math.floor(w * dpr);
+  matrixCanvas.height = Math.floor(h * dpr);
+  matrixCanvas.style.width = w + "px";
+  matrixCanvas.style.height = h + "px";
+  matrixCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const cols = Math.ceil(w / MATRIX_CELL);
+  matrixDrops = new Array(cols)
+    .fill(0)
+    .map(() => Math.floor((Math.random() * h) / MATRIX_CELL));
+}
+
+function paintMatrixRain() {
+  const w = window.innerWidth;
+  const h = window.innerHeight;
+  // Translucent fill creates the trailing-fade look as old draws bleed out.
+  matrixCtx.fillStyle = "rgba(0, 0, 0, 0.07)";
+  matrixCtx.fillRect(0, 0, w, h);
+  matrixCtx.font = `${MATRIX_CELL - 2}px "IBM Plex Mono", ui-monospace, monospace`;
+  matrixCtx.textBaseline = "top";
+
+  for (let i = 0; i < matrixDrops.length; i++) {
+    const ch = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
+    const x = i * MATRIX_CELL;
+    const y = matrixDrops[i] * MATRIX_CELL;
+    // Brighter head cell, dimmer body — feels like trailing characters.
+    matrixCtx.fillStyle = "rgba(170, 255, 190, 0.95)";
+    matrixCtx.fillText(ch, x, y);
+    if (matrixDrops[i] > 1) {
+      matrixCtx.fillStyle = "rgba(77, 255, 122, 0.45)";
+      matrixCtx.fillText(
+        MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)],
+        x,
+        y - MATRIX_CELL
+      );
+    }
+    if (y > h && Math.random() > 0.975) {
+      matrixDrops[i] = 0;
+    }
+    matrixDrops[i]++;
+  }
+  matrixRaf = requestAnimationFrame(paintMatrixRain);
+}
+
+function startMatrixRain() {
+  sizeMatrixCanvas();
+  if (matrixRaf === null) {
+    matrixRaf = requestAnimationFrame(paintMatrixRain);
+  }
+}
+
+function stopMatrixRain() {
+  if (matrixRaf !== null) {
+    cancelAnimationFrame(matrixRaf);
+    matrixRaf = null;
+  }
+  matrixCtx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+}
+
+window.addEventListener("resize", () => {
+  if (matrixRaf !== null) sizeMatrixCanvas();
+});
 
 function populateThemeSelector(sel) {
   sel.innerHTML = "";

@@ -852,8 +852,7 @@ main {
   background-image: none;
 }
 
-/* CRT scanline overlay — sits above everything but ignores pointer events.
-   The mix-blend-mode keeps it tinting only on lit areas. */
+/* Faint CRT scanlines. Soft enough to leave text readable. */
 [data-theme="matrix"] body::before {
   content: "";
   position: fixed;
@@ -863,52 +862,63 @@ main {
     0deg,
     rgba(0, 0, 0, 0) 0px,
     rgba(0, 0, 0, 0) 2px,
-    rgba(0, 0, 0, 0.55) 3px,
+    rgba(0, 0, 0, 0.4) 3px,
     rgba(0, 0, 0, 0) 4px
   );
   z-index: 9999;
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
-/* Phosphor flicker. */
-[data-theme="matrix"] body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: rgba(77, 255, 122, 0.025);
-  mix-blend-mode: screen;
-  animation: matrix-flicker 0.18s steps(2) infinite;
-  z-index: 9998;
-}
-
-@keyframes matrix-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-/* Glow on key text */
+/* Glow only on accent elements, not prose. Single soft shadow at half alpha. */
 [data-theme="matrix"] .brand-name,
-[data-theme="matrix"] .drop-title,
-[data-theme="matrix"] .drop-icon,
 [data-theme="matrix"] .preset.active .preset-name,
 [data-theme="matrix"] .result-hero-metric,
-[data-theme="matrix"] .busy-pct,
-[data-theme="matrix"] .drop-overlay-text {
-  text-shadow: 0 0 6px var(--accent), 0 0 1px var(--accent);
+[data-theme="matrix"] .busy-pct {
+  text-shadow: 0 0 8px rgba(77, 255, 122, 0.45);
   color: var(--accent);
 }
 
 [data-theme="matrix"] .drop-icon {
-  filter: drop-shadow(0 0 6px var(--accent));
+  filter: drop-shadow(0 0 4px rgba(77, 255, 122, 0.5));
 }
 
 [data-theme="matrix"] .preset.active {
-  box-shadow: inset 0 0 18px rgba(77, 255, 122, 0.18);
+  box-shadow: inset 0 0 12px rgba(77, 255, 122, 0.12);
 }
 
 [data-theme="matrix"] .progress-fill {
-  box-shadow: 0 0 8px var(--accent);
+  box-shadow: 0 0 6px rgba(77, 255, 122, 0.4);
+}
+
+/* Digital rain canvas — only painted while Matrix theme is active. */
+.matrix-rain {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+[data-theme="matrix"] .matrix-rain {
+  display: block;
+}
+
+[data-theme="matrix"] body {
+  position: relative;
+  z-index: 0;
+}
+
+/* Solid backgrounds on lifted surfaces so the rain stays a backdrop, not
+   a wash that bleeds into the text underneath. */
+[data-theme="matrix"] .topbar,
+[data-theme="matrix"] .drop-zone,
+[data-theme="matrix"] .preset,
+[data-theme="matrix"] .custom,
+[data-theme="matrix"] .encrypt-rail,
+[data-theme="matrix"] .result,
+[data-theme="matrix"] .busy-card,
+[data-theme="matrix"] .pwprompt-card {
+  background-color: rgba(2, 10, 4, 0.92);
 }
 
 [data-theme="matrix"] #lang,
