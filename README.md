@@ -2,6 +2,8 @@
 
 A modern archive tool with a desktop app and a CLI. Pick a preset, drop your files, get a `.hgr` archive.
 
+![hangar desktop app — Tron theme](screenshot.png)
+
 ## What's in the box
 
 - **Desktop app** — drag and drop to compress, drop a `.hgr` back in to extract. Three presets (Fast / Balanced / Max) cover almost everyone.
