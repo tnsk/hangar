@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hangar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-name">HANGAR</span>
+      </div>
+      <div class="topbar-right">
+        <span class="tagline" data-i18n="tagline"
+          >smaller than zip · faster than rar · beats 7z on max</span
+        >
+        <select id="theme" aria-label="Theme"></select>
+        <select id="lang" aria-label="Language"></select>
+      </div>
+    </header>
+
+    <main>
+      <section
+        id="drop"
+        class="drop-zone"
+        role="button"
+        tabindex="0"
+        aria-label="Drop files here or click to browse"
+      >
+        <span class="drop-bracket bracket-tl" aria-hidden="true"></span>
+        <span class="drop-bracket bracket-tr" aria-hidden="true"></span>
+        <span class="drop-bracket bracket-bl" aria-hidden="true"></span>
+        <span class="drop-bracket bracket-br" aria-hidden="true"></span>
+
+        <div class="drop-content">
+          <svg class="drop-icon" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              d="M32 8v34m0 0l-12-12m12 12l12-12M10 50h44"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="3"
+              stroke-linecap="square"
+              stroke-linejoin="miter"
+            />
+          </svg>
+          <div class="drop-title" data-i18n="dropTitle">
+            Drop files or folders to compress
+          </div>
+          <div class="drop-sub">
+            <span data-i18n="dropClickHint">or click to browse</span>
+          </div>
+          <div class="drop-hint">
+            <span data-i18n="dropSubBefore">drop a single </span
+            ><code>.hgr</code
+            ><span data-i18n="dropSubAfter"> archive to extract instead</span>
+          </div>
+        </div>
+
+        <div class="drop-overlay" aria-hidden="true">
+          <span class="drop-overlay-text" data-i18n="dropOverlay">DROP</span>
+        </div>
+      </section>
+
+      <section class="rails">
+        <div class="rail-label" data-i18n="presetLabel">PRESET</div>
+        <div class="presets" role="tablist" aria-label="Compression preset">
+          <button class="preset" data-preset="fast">
+            <span class="preset-name" data-i18n="presetFastName">Fast</span>
+            <span class="preset-detail" data-i18n="presetFastDetail"
+              >level 3 · per-file</span
+            >
+          </button>
+          <button class="preset active" data-preset="balanced">
+            <span class="preset-name" data-i18n="presetBalancedName"
+              >Balanced</span
+            >
+            <span class="preset-detail" data-i18n="presetBalancedDetail"
+              >level 9 · solid + long</span
+            >
+          </button>
+          <button class="preset" data-preset="max">
+            <span class="preset-name" data-i18n="presetMaxName">Max</span>
+            <span class="preset-detail" data-i18n="presetMaxDetail"
+              >level 19 · solid + long</span
+            >
+          </button>
+          <button class="preset preset-icon" data-preset="custom" aria-label="Custom settings">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+              />
+              <path
+                d="M12 4v2m0 12v2m8-8h-2m-12 0H4m13.66-5.66l-1.41 1.41M7.75 16.25l-1.41 1.41m0-11.32l1.41 1.41m8.49 8.49l1.41 1.41"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="custom hidden" id="custom-panel">
+          <label>
+            <span data-i18n="customLevel">Level</span>
+            <input type="range" id="level" min="1" max="22" value="9" />
+            <span class="value-label" id="level-val">9</span>
+          </label>
+          <label class="check">
+            <input type="checkbox" id="solid" checked />
+            <span data-i18n="customSolid"
+              >Solid mode (cross-file compression)</span
+            >
+          </label>
+          <label class="check">
+            <input type="checkbox" id="long" checked />
+            <span data-i18n="customLong">Long range (128 MB window)</span>
+          </label>
+          <label>
+            <span data-i18n="customThreads">Threads</span>
+            <input type="number" id="threads" min="0" value="0" />
+            <span class="hint" data-i18n="customThreadsHint">(0 = auto)</span>
+          </label>
+        </div>
+      </section>
+
+      <section class="encrypt-rail">
+        <label class="encrypt-toggle">
+          <input type="checkbox" id="encrypt" />
+          <span class="encrypt-lock" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14">
+              <path
+                d="M7 11V8a5 5 0 0110 0v3M5 11h14v10H5z"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="square"
+              />
+            </svg>
+          </span>
+          <span class="encrypt-label" data-i18n="customEncrypt"
+            >Encrypt with password</span
+          >
+        </label>
+        <div class="encrypt-fields hidden" id="encrypt-fields">
+          <input
+            type="password"
+            id="encrypt-pw"
+            data-i18n-placeholder="passwordPlaceholder"
+            placeholder="Password"
+            autocomplete="new-password"
+          />
+          <input
+            type="password"
+            id="encrypt-pw2"
+            data-i18n-placeholder="passwordConfirmPlaceholder"
+            placeholder="Confirm password"
+            autocomplete="new-password"
+          />
+        </div>
+      </section>
+
+      <section id="result" class="result hidden">
+        <button class="dismiss" id="dismiss" aria-label="Dismiss">×</button>
+        <div class="result-hero">
+          <span class="result-hero-label" id="result-title">—</span>
+          <span class="result-hero-metric" id="result-metric"></span>
+          <span class="result-hero-unit" id="result-metric-unit"></span>
+        </div>
+        <div class="result-body" id="result-body"></div>
+      </section>
+
+      <section id="pwprompt" class="pwprompt hidden" aria-modal="true" role="dialog">
+        <div class="pwprompt-card">
+          <div class="pwprompt-title" data-i18n="passwordPromptTitle">
+            Enter password
+          </div>
+          <div class="pwprompt-sub" data-i18n="passwordPromptSub">
+            This archive is encrypted.
+          </div>
+          <input
+            type="password"
+            id="pwprompt-input"
+            data-i18n-placeholder="passwordPlaceholder"
+            placeholder="Password"
+            autocomplete="current-password"
+          />
+          <div class="pwprompt-actions">
+            <button class="pwprompt-cancel" id="pwprompt-cancel" data-i18n="passwordPromptCancel">Cancel</button>
+            <button class="pwprompt-ok" id="pwprompt-ok" data-i18n="passwordPromptOk">Open</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="busy" class="busy hidden">
+        <div class="busy-card">
+          <div class="busy-row">
+            <span class="busy-label" id="busy-label">working…</span>
+            <span class="busy-pct" id="busy-pct">0%</span>
+          </div>
+          <div class="progress">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="busy-detail">
+            <span id="busy-file" class="busy-file"></span>
+            <span id="busy-stats" class="busy-stats"></span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="i18n.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>

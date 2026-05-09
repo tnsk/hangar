@@ -1,0 +1,16 @@
+[package]
+name = "hangar-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[dependencies]
+zstd = { version = "0.13", features = ["zstdmt"] }
+byteorder = "1"
+xxhash-rust = { version = "0.8", features = ["xxh3"] }
+thiserror = "1"
+chacha20poly1305 = "0.10"
+argon2 = "0.5"
+zeroize = { version = "1", features = ["zeroize_derive"] }
+getrandom = "0.2"

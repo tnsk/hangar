@@ -1,0 +1,6 @@
+/target
+**/*.rs.bk
+*.hgr
+.DS_Store
+# Tauri-generated capability schemas (regenerated at build time)
+crates/gui/gen/
